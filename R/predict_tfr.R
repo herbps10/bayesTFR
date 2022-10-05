@@ -7,6 +7,7 @@ tfr.predict <- function(mcmc.set=NULL, end.year=2100,
 						mu=2.1, rho=0.8859, sigmaAR1=0.1016,
 						min.tfr=0.5, use.correlation=FALSE,
 						save.as.ascii=0, output.dir = NULL,
+						enable_phase3 = TRUE,
 						low.memory=TRUE,
 						seed=NULL, verbose=TRUE, uncertainty=FALSE, ...) {
 	if(!is.null(mcmc.set)) {
@@ -55,7 +56,7 @@ tfr.predict <- function(mcmc.set=NULL, end.year=2100,
 					start.year=start.year, nr.traj=nr.traj, burnin=burnin, thin=thin, use.tfr3=has.phase3, burnin3=burnin3,
 					mu=mu, rho=rho,  sigmaAR1 = sigmaAR1, min.tfr=min.tfr, use.correlation=use.correlation,
 					save.as.ascii=save.as.ascii,
-					output.dir=output.dir, verbose=verbose, uncertainty=uncertainty, ...))			
+					output.dir=output.dir, verbose=verbose, uncertainty=uncertainty, enable_phase3 = enable_phase3, ...))			
 }
 
 .find.burnin.nr.traj.from.diag <- function(diag.list, verbose = FALSE) {
@@ -168,6 +169,7 @@ make.tfr.prediction <- function(mcmc.set, start.year=NULL, end.year=2100, replac
 								mu=2.1, rho=0.9057, sigmaAR1 = 0.0922, min.tfr=0.5,
 								use.correlation=FALSE, countries = NULL,
 								adj.factor1=NA, adj.factor2=0, forceAR1=FALSE,
+								enable_phase3 = TRUE,
 								boost.first.period.in.phase2=TRUE,
 							    save.as.ascii=0, output.dir = NULL, write.summary.files=TRUE, 
 							    is.mcmc.set.thinned=FALSE, force.creating.thinned.mcmc=FALSE,
@@ -495,6 +497,9 @@ make.tfr.prediction <- function(mcmc.set, start.year=NULL, end.year=2100, replac
 	                 										cs.par.values.list[[country]][s, cs.var.names[[country]]$Triangle_c4]) && 
 	                 									(all.f_ps[icountry, year-1,s] > all.f_ps[icountry,year-2,s]))
 		 			}
+					if(enable_phase3 == FALSE) {
+						is.in.phase3[icountry] <- FALSE
+					}
 					if(adjust.true) {
 						if(year == first.projection[icountry]) { # first projection period
 							D11 <- (all.tfr[this.T_end-1] - all.tfr[this.T_end])
